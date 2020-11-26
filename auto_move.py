@@ -1,39 +1,23 @@
 from watchdog.observers import Observer
-
 from watchdog.events import FileSystemEventHandler
 import filetype
 import os
-import json
 import time
-
-types_files = ('pdf', 'exe', 'zip',)
-types_images = ('jpg', 'png', 'gif')
-
 
 
 class MyHandler(FileSystemEventHandler):
-
     def on_any_event(self, event):
+        new_folder_path = '/Users/fabri/Desktop' + '/'
         for filename in os.listdir(folder_to_track):
-            src_type = filetype.guess(folder_to_track + "/" + filename)
-            src = folder_to_track + "/" + filename
-
-            if str(src_type.extension) == types_files[0]:
-                new_destination = pdf_folder + "/" + filename
-                os.rename(src, new_destination)
-            elif str(src_type.extension) == types_files[2]:
-                new_destination = rar_folder + "/" + filename
-                os.rename(src, new_destination)
-            elif src_type.extension in types_images:
-                new_destination = image_folder + "/" + filename
-                os.rename(src, new_destination)
-            else:
-                print("Error")
+            src = folder_to_track + '/' + filename
+            filename_type = filetype.guess(src)
+            if not os.path.exists(new_folder_path + filename_type.extension):
+                os.makedirs(new_folder_path + filename_type.extension)
+            print(filename_type.extension)
+            new_destination = new_folder_path + filename_type.extension + "/" + filename
+            os.rename(src, new_destination)
 
 
-rar_folder = "/Users/fabri/Desktop/pasta_rar"
-image_folder = "/Users/fabri/Desktop/pasta_imagens"
-pdf_folder = "/Users/fabri/Desktop/pasta_pdf"
 folder_to_track = "/Users/fabri/Desktop/pasta_inicial"
 
 event_handler = MyHandler()
